@@ -36,6 +36,7 @@ export interface OrderParams {
   
   export interface PaymentGatewayConfig {
     apiUrl: string;
+    apiPort: string;
     merchantId: string;
     clientUrl: string;
     encryptionKey: string;

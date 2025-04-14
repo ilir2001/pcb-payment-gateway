@@ -24,7 +24,7 @@ export class PaymentGateway {
         typeRid: '1',
         amount,
         currency: 'EUR',
-        description: 'Syncrace platform subscription',
+        description: 'Payment for order',
         language: 'en',
         hppRedirectUrl: `${this.config.clientUrl}/successfully-payment/${uniqueToken}`,
         initiationEnvKind: 'Browser',
@@ -52,7 +52,9 @@ export class PaymentGateway {
       'X-Merchant-ID': this.config.merchantId,
     };
 
-    const endpoint = `${this.config.apiUrl}:8000/order`;
+    const port = this.config.apiPort || '8000'; // Use config port or default to 8000
+    const endpoint = `${this.config.apiUrl}:${port}/order`;
+
 
     try {
       const httpsAgent = getHttpsAgent(
@@ -65,8 +67,6 @@ export class PaymentGateway {
         headers,
         httpsAgent,
       });
-
-      console.log('test');
 
       const { id, password, status, hppUrl } = response.data.order;
 
@@ -97,9 +97,9 @@ export class PaymentGateway {
         orderId: id,
       };
     } catch (error) {
-      console.error('Error creating order:', error.message);
+      console.error('Error creating order:', (error as any).message);
 
-      if (error.response) {
+      if (axios.isAxiosError(error) && error.response) {
         console.error('Response Data:', error.response.data);
         console.error('Response Status:', error.response.status);
         console.error('Response Headers:', error.response.headers);

@@ -1,5 +1,5 @@
 {
-  "name": "payment-gateway",
+  "name": "pcb-payment-gateway",
   "version": "1.0.0",
   "description": "Payment gateway integration for processing orders",
   "main": "dist/index.js",
