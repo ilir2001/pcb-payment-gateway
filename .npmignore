@@ -1,0 +1,42 @@
+# Source code (since we're publishing the compiled version)
+src/
+
+# Tests
+tests/
+__tests__/
+**/*.spec.ts
+**/*.test.ts
+jest.config.js
+
+# Configuration files
+tsconfig.json
+tslint.json
+.eslintrc
+.prettier*
+.editorconfig
+
+# Development files
+.github/
+.vscode/
+.idea/
+.travis.yml
+.gitlab-ci.yml
+.circleci/
+coverage/
+
+# Documentation that's not needed in the package
+docs/
+examples/
+demo/
+CONTRIBUTING.md
+CHANGELOG.md
+
+# Git files
+.git/
+.gitignore
+
+# Other files not needed in the published package
+nodemon.json
+*.log
+*.tgz
+.DS_Store
