@@ -6,6 +6,6 @@ export function getHttpsAgent(sslCert: string, sslKey: string, sslCa: string): h
     cert: fs.readFileSync(sslCert),
     key: fs.readFileSync(sslKey),
     ca: fs.readFileSync(sslCa),
-    // rejectUnauthorized: false,
+    rejectUnauthorized: false,
   });
 }

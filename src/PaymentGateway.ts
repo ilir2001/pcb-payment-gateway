@@ -4,7 +4,7 @@ import { OrderParams, OrderResponse, PaymentGatewayConfig, OrderData } from './t
 import { encryptData } from './utils/encryption';
 import { generateUniqueToken } from './utils/tokenGenerator';
 import { getHttpsAgent } from './utils/httpsAgent';
-
+import CryptoJS from 'crypto-js';
 export class PaymentGateway {
   private config: PaymentGatewayConfig;
   private orderModel: any;
@@ -106,6 +106,53 @@ export class PaymentGateway {
       }
 
       throw new Error('Failed to create order');
+    }
+  }
+
+  async completeOrder(
+    orderId: string,
+    encryptionKey: string,
+    procreditApi: string,
+  ): Promise<string> {
+    const order = await this.orderModel.findOne({ orderId: orderId });
+
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    // Function to decrypt the password
+    const decryptPassword = (
+      encryptedPassword: string,
+      key: string,
+    ): string => {
+      const bytes = CryptoJS.AES.decrypt(encryptedPassword, key);
+      return bytes.toString(CryptoJS.enc.Utf8);
+    };
+
+    // Decrypt the password
+    const decryptedPassword = decryptPassword(order.password, encryptionKey);
+
+    
+    // Call the bank API
+    const endpoint = `${procreditApi}:8000/order/${orderId}?password=${decryptedPassword}&tokenDetailLevel=2&tranDetailLevel=1`;
+
+    try {
+      const apiResponse = await axios.get(endpoint);
+      console.log('API Response:', apiResponse);
+      if (apiResponse.data.order.status === 'Expired') {
+        throw new Error('Order expired');
+      }
+
+      const returnedStatus = apiResponse.data.order.status;
+
+      await this.orderModel.updateOne(
+        { orderId: orderId },
+        { $set: { status: returnedStatus } },
+      );
+
+      return 'Order status updated successfully';
+    } catch (error) {
+      throw new Error(`Error from bank API: ${(error as any).message}`);
     }
   }
 }
