@@ -86,6 +86,7 @@ export class PaymentGateway {
         status,
         urlToken: uniqueToken,
         createdBy: userId,
+        amount,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
